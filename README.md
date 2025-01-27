@@ -77,7 +77,11 @@ API documentation is available at `http://localhost:8080/swagger-ui.html`
 
 1. **Cloud Deployment**: The application can be deployed on cloud platforms like AWS, Azure, or Google Cloud Platform for scalability, reliability, and ease of management.
 
-2. **Docker**: The application can be containerized using Docker to simplify deployment, scaling and to ensure consistency across different environments.
+2. **Docker**: The application can be containerized using Docker to simplify deployment, scaling and to ensure consistency across different environments. with the following command:
+
+```bash
+sudo docker-compose up -d --build
+```
 
 3. **CI/CD Pipeline**: Implementing a CI/CD pipeline using tools like Jenkins or GitHub Actions can automate the build, test, and deployment process.
 
