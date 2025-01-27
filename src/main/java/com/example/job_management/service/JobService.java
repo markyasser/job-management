@@ -14,6 +14,29 @@ public class JobService {
         this.jobRepository = jobRepository;
     }
 
+    public String validateJob(Job job) {
+        if (job.getType() == null || job.getType().length() == 0) {
+            return "Invalid job type";
+        }
+        if (job.getPriority() < 1) {
+            return "Invalid job priority";
+        }
+        if (job.getScheduledTime() != null && job.getScheduledTime().isBefore(java.time.LocalDateTime.now())) {
+            return "Scheduled time cannot be in the past";
+        }
+        return null;
+    }
+
+    public String validateJobs(List<Job> jobs) {
+        for (Job job : jobs) {
+            String error = validateJob(job);
+            if (error != null) {
+                return "Job " + job.getType() + " : " + error;
+            }
+        }
+        return null;
+    }
+
     public Job createJob(Job job) {
         if (job.getScheduledTime() == null) {
             int random = (int) (Math.random() * 4);

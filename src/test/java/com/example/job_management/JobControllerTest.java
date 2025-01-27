@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -36,12 +37,27 @@ class JobControllerTest {
         // Mock the behavior of jobService
         when(jobService.createJob(job)).thenReturn(job);
 
-        ResponseEntity<Job> response = jobController.createJob(job);
+        @SuppressWarnings("unchecked")
+        ResponseEntity<Job> response = (ResponseEntity<Job>) jobController.createJob(job);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("Test Job", response.getBody().getType());
         verify(jobService, times(1)).createJob(job);
+    }
+
+    @Test
+    public void createJob_InvalidJobType() {
+        Job job = new Job();
+        job.setId(1L);
+        job.setType("");
+
+        when(jobService.validateJob(job)).thenReturn("Invalid job type");
+        ResponseEntity<?> response = jobController.createJob(job);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody() instanceof Response);
+        verify(jobService, times(0)).createJob(job);
     }
 
     @Test
@@ -54,10 +70,10 @@ class JobControllerTest {
         job2.setId(2L);
         job2.setType("Test Job 2");
 
-        // Mock the behavior of jobService
         when(jobService.createJobs(anyList())).thenReturn(List.of(job1, job2));
 
-        ResponseEntity<List<Job>> response = jobController.createJobs(List.of(job1, job2));
+        @SuppressWarnings("unchecked")
+        ResponseEntity<List<Job>> response = (ResponseEntity<List<Job>>) jobController.createJobs(List.of(job1, job2));
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -65,6 +81,24 @@ class JobControllerTest {
         assertEquals("Test Job 1", response.getBody().get(0).getType());
         assertEquals("Test Job 2", response.getBody().get(1).getType());
         verify(jobService, times(1)).createJobs(List.of(job1, job2));
+    }
+
+    @Test
+    public void createBulkJobs_InvalidJobType() {
+        Job job1 = new Job();
+        job1.setId(1L);
+        job1.setType("Test Job 1");
+
+        Job job2 = new Job();
+        job2.setId(2L);
+        job2.setType("");
+
+        when(jobService.validateJobs(List.of(job1, job2))).thenReturn("Job Test Job 2 : Invalid job type");
+        ResponseEntity<?> response = jobController.createJobs(List.of(job1, job2));
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody() instanceof Response);
+        verify(jobService, times(0)).createJobs(List.of(job1, job2));
     }
 
     @Test

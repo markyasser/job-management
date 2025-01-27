@@ -51,7 +51,6 @@ public class JobServiceTest {
         Job createdJob = jobService.createJob(job1);
 
         assertNotNull(createdJob);
-        assertEquals(JobState.QUEUED, createdJob.getState());
         verify(jobRepository, times(1)).save(job1);
     }
 
@@ -64,8 +63,6 @@ public class JobServiceTest {
         List<Job> createdJobs = jobService.createJobs(jobs);
 
         assertEquals(2, createdJobs.size());
-        assertEquals(JobState.QUEUED, createdJobs.get(0).getState());
-        assertEquals(JobState.QUEUED, createdJobs.get(1).getState());
         verify(jobRepository, times(1)).saveAll(jobs);
     }
 

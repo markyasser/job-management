@@ -28,10 +28,16 @@ public class JobController {
     @Operation(summary = "Create a new job", description = "Adds a new job to the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Job created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Job.class), examples = @ExampleObject(name = "Example Response", value = "{\"id\": 1, \"name\": \"Example Job\", \"state\": \"QUEUED\"}", summary = "An example job response"))),
-            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(name = "Example Response", value = "{\"message\": \"Invalid request\", \"status\": 400}", summary = "An example error response")))
+            @ApiResponse(responseCode = "400", description = "Error Message", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(name = "Example Response", value = "{\"message\": \"Job email :  Scheduled time cannot be in the past\", \"status\": 400}", summary = "An example error response")))
     })
     @PostMapping
-    public ResponseEntity<Job> createJob(@RequestBody Job job) {
+    public ResponseEntity<?> createJob(@RequestBody Job job) {
+        String error = jobService.validateJob(job);
+        if (error != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new Response(error, HttpStatus.BAD_REQUEST.value()));
+
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(jobService.createJob(job));
 
     }
@@ -39,10 +45,15 @@ public class JobController {
     @Operation(summary = "Create a bulk of new jobs", description = "Adds a list off new job to the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Jobs created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Job.class), examples = @ExampleObject(name = "Example Response", value = "[{\"id\": 1, \"name\": \"Example Job\", \"state\": \"QUEUED\"}]", summary = "An example job list response"))),
-            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(name = "Example Response", value = "{\"message\": \"Invalid request\", \"status\": 400}", summary = "An example error response")))
+            @ApiResponse(responseCode = "400", description = "Error Message", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(name = "Example Response", value = "{\"message\": \"Scheduled time cannot be in the past\", \"status\": 400}", summary = "An example error response")))
     })
     @PostMapping("/bulk")
-    public ResponseEntity<List<Job>> createJobs(@RequestBody List<Job> jobs) {
+    public ResponseEntity<?> createJobs(@RequestBody List<Job> jobs) {
+        String error = jobService.validateJobs(jobs);
+        if (error != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new Response(error, HttpStatus.BAD_REQUEST.value()));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(jobService.createJobs(jobs));
     }
 
