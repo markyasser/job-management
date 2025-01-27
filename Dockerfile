@@ -1,33 +1,14 @@
-# Step 1: Build the application
-FROM maven:3.8.1-openjdk-17-slim AS build
-
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the pom.xml and download the dependencies
-COPY pom.xml .
-
-# Download the dependencies
-RUN mvn dependency:go-offline
-
-# Copy the source code
-COPY src /app/src
-
-# Package the application
-RUN mvn clean package -DskipTests
-
-# Step 2: Create a new image to run the app
+# Use an official OpenJDK runtime as a parent image
 FROM openjdk:17-jdk-slim
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the packaged jar from the build stage
-COPY --from=build /app/target/job-management-system-0.0.1-SNAPSHOT.jar /app/job-management-system.jar
+# Copy the jar file into the container
+COPY target/*.jar app.jar
 
-# Expose the port that Spring Boot will run on (default is 3000)
-EXPOSE 3000
+# Expose the port the app runs on
+EXPOSE 8080
 
-# Run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "/app/job-management-system.jar"]
+# Run the jar file
+ENTRYPOINT ["java", "-jar", "app.jar"]
