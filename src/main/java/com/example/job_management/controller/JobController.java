@@ -36,6 +36,16 @@ public class JobController {
 
     }
 
+    @Operation(summary = "Create a bulk of new jobs", description = "Adds a list off new job to the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Jobs created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Job.class), examples = @ExampleObject(name = "Example Response", value = "[{\"id\": 1, \"name\": \"Example Job\", \"state\": \"QUEUED\"}]", summary = "An example job list response"))),
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class), examples = @ExampleObject(name = "Example Response", value = "{\"message\": \"Invalid request\", \"status\": 400}", summary = "An example error response")))
+    })
+    @PostMapping("/bulk")
+    public ResponseEntity<List<Job>> createJobs(@RequestBody List<Job> jobs) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobService.createJobs(jobs));
+    }
+
     @Operation(summary = "Get all jobs", description = "Returns a list of all jobs in the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of jobs returned successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Job.class), examples = @ExampleObject(name = "Example Response", value = "[{\"id\": 1, \"name\": \"Example Job\", \"state\": \"QUEUED\"}]", summary = "An example job list response")))

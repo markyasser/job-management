@@ -19,6 +19,13 @@ public class JobService {
         return jobRepository.save(job);
     }
 
+    public List<Job> createJobs(List<Job> jobs) {
+        for (Job job : jobs) {
+            job.setState(JobState.QUEUED);
+        }
+        return jobRepository.saveAll(jobs);
+    }
+
     public List<Job> getAllJobs() {
         return jobRepository.findAll();
     }
