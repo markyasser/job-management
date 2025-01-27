@@ -15,13 +15,23 @@ public class JobService {
     }
 
     public Job createJob(Job job) {
-        job.setState(JobState.QUEUED);
+        if (job.getScheduledTime() == null) {
+            int random = (int) (Math.random() * 4);
+            job.setState(JobState.values()[random]);
+        } else {
+            job.setState(JobState.QUEUED);
+        }
         return jobRepository.save(job);
     }
 
     public List<Job> createJobs(List<Job> jobs) {
         for (Job job : jobs) {
-            job.setState(JobState.QUEUED);
+            if (job.getScheduledTime() == null) {
+                int random = (int) (Math.random() * 4);
+                job.setState(JobState.values()[random]);
+            } else {
+                job.setState(JobState.QUEUED);
+            }
         }
         return jobRepository.saveAll(jobs);
     }

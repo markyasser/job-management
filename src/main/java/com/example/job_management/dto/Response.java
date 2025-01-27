@@ -9,7 +9,6 @@ public class Response {
         this.status = status;
     }
 
-    // Getters and Setters
     public String getMessage() {
         return message;
     }

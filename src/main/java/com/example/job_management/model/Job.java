@@ -21,7 +21,6 @@ public class Job {
     @Column(nullable = true)
     private LocalDateTime scheduledTime;
 
-    // Constructors
     public Job() {
     }
 

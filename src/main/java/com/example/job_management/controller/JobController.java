@@ -132,6 +132,7 @@ public class JobController {
         job.setState(JobState.QUEUED);
         jobService.createJob(job);
 
-        return ResponseEntity.ok(new Response("Job retried successfully", HttpStatus.OK.value()));
+        return ResponseEntity
+                .ok(new Response("Job retried successfully with new state : " + job.getState(), HttpStatus.OK.value()));
     }
 }
