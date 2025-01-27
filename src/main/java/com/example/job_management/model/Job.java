@@ -18,6 +18,7 @@ public class Job {
 
     private int priority;
 
+    @Column(nullable = true)
     private LocalDateTime scheduledTime;
 
     // Constructors
