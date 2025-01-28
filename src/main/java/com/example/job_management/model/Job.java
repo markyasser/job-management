@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import com.example.job_management.Common.JobState;
+import com.example.job_management.dto.JobDto;
 
 @Entity
 public class Job {
@@ -22,6 +23,12 @@ public class Job {
     private LocalDateTime scheduledTime;
 
     public Job() {
+    }
+
+    public Job(JobDto jobDto) {
+        this.type = jobDto.getType();
+        this.priority = jobDto.getPriority();
+        this.scheduledTime = jobDto.getScheduledTime();
     }
 
     public Job(String type, JobState state, int priority, LocalDateTime scheduledTime) {

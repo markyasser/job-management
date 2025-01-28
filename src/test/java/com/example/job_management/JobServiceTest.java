@@ -1,6 +1,7 @@
 package com.example.job_management;
 
 import com.example.job_management.Common.JobState;
+import com.example.job_management.dto.JobDto;
 import com.example.job_management.model.Job;
 import com.example.job_management.repository.JobRepository;
 import com.example.job_management.service.JobService;
@@ -48,7 +49,7 @@ public class JobServiceTest {
 
         when(jobRepository.save(job1)).thenReturn(job1);
 
-        Job createdJob = jobService.createJob(job1);
+        Job createdJob = jobService.createJob(new JobDto(job1));
 
         assertNotNull(createdJob);
         verify(jobRepository, times(1)).save(job1);
@@ -60,7 +61,7 @@ public class JobServiceTest {
         List<Job> jobs = Arrays.asList(job1, job2);
         when(jobRepository.saveAll(jobs)).thenReturn(jobs);
 
-        List<Job> createdJobs = jobService.createJobs(jobs);
+        List<Job> createdJobs = jobService.createJobs(Arrays.asList(new JobDto(job1), new JobDto(job2)));
 
         assertEquals(2, createdJobs.size());
         verify(jobRepository, times(1)).saveAll(jobs);

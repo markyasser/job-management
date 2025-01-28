@@ -1,10 +1,10 @@
 package com.example.job_management.dto;
 
-public class Response {
+public class ResponseDto {
     private String message;
     private int status;
 
-    public Response(String message, int status) {
+    public ResponseDto(String message, int status) {
         this.message = message;
         this.status = status;
     }

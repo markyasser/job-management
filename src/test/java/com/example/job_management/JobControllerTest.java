@@ -4,7 +4,8 @@ import com.example.job_management.model.Job;
 import com.example.job_management.service.JobService;
 import com.example.job_management.Common.JobState;
 import com.example.job_management.controller.JobController;
-import com.example.job_management.dto.Response;
+import com.example.job_management.dto.JobDto;
+import com.example.job_management.dto.ResponseDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -33,17 +34,18 @@ class JobControllerTest {
         Job job = new Job();
         job.setId(1L);
         job.setType("Test Job");
+        JobDto jobDto = new JobDto(job);
 
         // Mock the behavior of jobService
-        when(jobService.createJob(job)).thenReturn(job);
+        when(jobService.createJob(jobDto)).thenReturn(job);
 
         @SuppressWarnings("unchecked")
-        ResponseEntity<Job> response = (ResponseEntity<Job>) jobController.createJob(job);
+        ResponseEntity<Job> response = (ResponseEntity<Job>) jobController.createJob(jobDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("Test Job", response.getBody().getType());
-        verify(jobService, times(1)).createJob(job);
+        verify(jobService, times(1)).createJob(jobDto);
     }
 
     @Test
@@ -51,13 +53,14 @@ class JobControllerTest {
         Job job = new Job();
         job.setId(1L);
         job.setType("");
+        JobDto jobDto = new JobDto(job);
 
-        when(jobService.validateJob(job)).thenReturn("Invalid job type");
-        ResponseEntity<?> response = jobController.createJob(job);
+        when(jobService.validateJob(jobDto)).thenReturn("Invalid job type");
+        ResponseEntity<?> response = jobController.createJob(jobDto);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
-        verify(jobService, times(0)).createJob(job);
+        assertTrue(response.getBody() instanceof ResponseDto);
+        verify(jobService, times(0)).createJob(jobDto);
     }
 
     @Test
@@ -70,17 +73,21 @@ class JobControllerTest {
         job2.setId(2L);
         job2.setType("Test Job 2");
 
+        JobDto jobDto1 = new JobDto(job1);
+        JobDto jobDto2 = new JobDto(job2);
+
         when(jobService.createJobs(anyList())).thenReturn(List.of(job1, job2));
 
         @SuppressWarnings("unchecked")
-        ResponseEntity<List<Job>> response = (ResponseEntity<List<Job>>) jobController.createJobs(List.of(job1, job2));
+        ResponseEntity<List<Job>> response = (ResponseEntity<List<Job>>) jobController
+                .createJobs(List.of(jobDto1, jobDto2));
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(2, response.getBody().size());
         assertEquals("Test Job 1", response.getBody().get(0).getType());
         assertEquals("Test Job 2", response.getBody().get(1).getType());
-        verify(jobService, times(1)).createJobs(List.of(job1, job2));
+        verify(jobService, times(1)).createJobs(List.of(jobDto1, jobDto2));
     }
 
     @Test
@@ -93,12 +100,15 @@ class JobControllerTest {
         job2.setId(2L);
         job2.setType("");
 
-        when(jobService.validateJobs(List.of(job1, job2))).thenReturn("Job Test Job 2 : Invalid job type");
-        ResponseEntity<?> response = jobController.createJobs(List.of(job1, job2));
+        JobDto jobDto1 = new JobDto(job1);
+        JobDto jobDto2 = new JobDto(job2);
+
+        when(jobService.validateJobs(List.of(jobDto1, jobDto2))).thenReturn("Job Test Job 2 : Invalid job type");
+        ResponseEntity<?> response = jobController.createJobs(List.of(jobDto1, jobDto2));
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
-        verify(jobService, times(0)).createJobs(List.of(job1, job2));
+        assertTrue(response.getBody() instanceof ResponseDto);
+        verify(jobService, times(0)).createJobs(List.of(jobDto1, jobDto2));
     }
 
     @Test
@@ -152,7 +162,7 @@ class JobControllerTest {
         ResponseEntity<?> response = jobController.getJobById(jobId);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
+        assertTrue(response.getBody() instanceof ResponseDto);
         verify(jobService, times(1)).getJobById(jobId);
     }
 
@@ -182,7 +192,7 @@ class JobControllerTest {
         ResponseEntity<?> response = jobController.deleteJob(jobId);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
+        assertTrue(response.getBody() instanceof ResponseDto);
         verify(jobService, times(1)).getJobById(jobId);
     }
 
@@ -198,7 +208,7 @@ class JobControllerTest {
         ResponseEntity<?> response = jobController.deleteJob(jobId);
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
+        assertTrue(response.getBody() instanceof ResponseDto);
         verify(jobService, times(1)).getJobById(jobId);
     }
 
@@ -212,7 +222,7 @@ class JobControllerTest {
         ResponseEntity<?> response = jobController.retryJob(jobId);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
+        assertTrue(response.getBody() instanceof ResponseDto);
         verify(jobService, times(1)).getJobById(jobId);
     }
 
@@ -228,7 +238,7 @@ class JobControllerTest {
         ResponseEntity<?> response = jobController.retryJob(jobId);
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
+        assertTrue(response.getBody() instanceof ResponseDto);
         verify(jobService, times(1)).getJobById(jobId);
     }
 
@@ -244,8 +254,8 @@ class JobControllerTest {
         ResponseEntity<?> response = jobController.retryJob(jobId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody() instanceof Response);
+        assertTrue(response.getBody() instanceof ResponseDto);
         verify(jobService, times(1)).getJobById(jobId);
-        verify(jobService, times(1)).createJob(job);
+        verify(jobService, times(1)).createJob(new JobDto(job));
     }
 }

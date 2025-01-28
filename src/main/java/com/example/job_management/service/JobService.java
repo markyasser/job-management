@@ -1,9 +1,12 @@
 package com.example.job_management.service;
 
 import com.example.job_management.Common.JobState;
+import com.example.job_management.dto.JobDto;
 import com.example.job_management.model.Job;
 import com.example.job_management.repository.JobRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,7 +17,7 @@ public class JobService {
         this.jobRepository = jobRepository;
     }
 
-    public String validateJob(Job job) {
+    public String validateJob(JobDto job) {
         if (job.getType() == null || job.getType().length() == 0) {
             return "Invalid job type";
         }
@@ -27,8 +30,8 @@ public class JobService {
         return null;
     }
 
-    public String validateJobs(List<Job> jobs) {
-        for (Job job : jobs) {
+    public String validateJobs(List<JobDto> jobs) {
+        for (JobDto job : jobs) {
             String error = validateJob(job);
             if (error != null) {
                 return "Job " + job.getType() + " : " + error;
@@ -37,7 +40,8 @@ public class JobService {
         return null;
     }
 
-    public Job createJob(Job job) {
+    public Job createJob(JobDto jobdto) {
+        Job job = new Job(jobdto);
         if (job.getScheduledTime() == null) {
             int random = (int) (Math.random() * 4);
             job.setState(JobState.values()[random]);
@@ -47,16 +51,19 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    public List<Job> createJobs(List<Job> jobs) {
-        for (Job job : jobs) {
+    public List<Job> createJobs(List<JobDto> jobs) {
+        List<Job> jobList = new ArrayList<>();
+        for (JobDto jobdto : jobs) {
+            Job job = new Job(jobdto);
             if (job.getScheduledTime() == null) {
                 int random = (int) (Math.random() * 4);
                 job.setState(JobState.values()[random]);
             } else {
                 job.setState(JobState.QUEUED);
             }
+            jobList.add(job);
         }
-        return jobRepository.saveAll(jobs);
+        return jobRepository.saveAll(jobList);
     }
 
     public List<Job> getAllJobs() {
