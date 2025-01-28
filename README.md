@@ -95,6 +95,8 @@ API documentation is available at `http://localhost:8080/swagger-ui.html`
 sudo docker-compose up -d --build
 ```
 
-3. **CI/CD Pipeline**: Implementing a CI/CD pipeline using tools like Jenkins or GitHub Actions can automate the build, test, and deployment process.
+3. **Kubernetes**: The application can be deployed on Kubernetes for container orchestration, scaling, and management.
+
+4. **CI/CD Pipeline**: Implementing a CI/CD pipeline using tools like Jenkins or GitHub Actions can automate the build, test, and deployment process.
 
 An already deployed version of the application can be accessed at Azure [http://devtest.switzerlandnorth.cloudapp.azure.com:8080/swagger-ui.html](http://devtest.switzerlandnorth.cloudapp.azure.com:8080/swagger-ui.html)
