@@ -84,7 +84,7 @@ public class JobController {
 
     @Operation(summary = "Get the status of a job", description = "Returns the status of a job by its ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Job status returned successfully", content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class), examples = @ExampleObject(name = "Example Response", value = "QUEUED", summary = "An example job status response"))),
+            @ApiResponse(responseCode = "200", description = "Job status returned successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class), examples = @ExampleObject(name = "Example Response", value = "{\"message\": \"QUEUED\", \"status\": 200}", summary = "An example job status response"))),
             @ApiResponse(responseCode = "404", description = "Job not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDto.class), examples = @ExampleObject(name = "Example Response", value = "{\"message\": \"Job not found\", \"status\": 404}", summary = "An example error response")))
     })
     @GetMapping("/status/{id}")
@@ -94,7 +94,7 @@ public class JobController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseDto("Job not found", HttpStatus.NOT_FOUND.value()));
         }
-        return ResponseEntity.ok(job.getState());
+        return ResponseEntity.ok(new ResponseDto(job.getState().toString(), HttpStatus.OK.value()));
     }
 
     @Operation(summary = "Delete a job", description = "Deletes a job by its ID")
