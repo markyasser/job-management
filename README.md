@@ -18,17 +18,16 @@ The Job Management System is designed to handle the execution of various types o
 
 ### Prerequisites:
 
-- Java 17 (or above) installed
-- Spring Boot 3.2.x or later
-- Maven or Gradle for building the project
+- Java 17
+- Maven 3.9.x
 
 ### Steps:
 
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/your-username/job-management-system.git
-   cd job-management-system
+   git clone https://github.com/markyasser/job-management.git
+   cd job-management
    ```
 
 2. **Build the Project:**
@@ -44,7 +43,7 @@ The Job Management System is designed to handle the execution of various types o
    ```
 
 4. **Access the Application:**
-   Open a web browser and go to `http://localhost:8080` to access the Job Management System.
+   Access the API throw `http://localhost:8080/{END_POINT}` to access the Job Management System backend.
 
 ## How to Run the Test Suite
 
@@ -71,7 +70,7 @@ API documentation is available at `http://localhost:8080/swagger-ui.html`
 
 1. **Job Execution Logic**: The job execution logic is not fully implemented. The system only tracks state changes but does not actually perform any actions for jobs. This will require an additional execution engine.
 
-2. **Concurrency Handling**: The job execution logic is not fully implemented. The system only tracks state changes but does not actually perform any actions for jobs. This will require an additional execution engine.
+2. **In-Memory Database**: The in-memory H2 database is not suitable for production use. A persistent database like PostgreSQL or MySQL should be used.
 
 ## Deployment Options
 
