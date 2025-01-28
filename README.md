@@ -42,8 +42,21 @@ The Job Management System is designed to handle the execution of various types o
    mvn spring-boot:run
    ```
 
-4. **Access the Application:**
-   Access the API throw `http://localhost:8080/{END_POINT}` to access the Job Management System backend.
+4. **Create configuration file:**
+
+   Create a file named `application.properties` in the `src/main/resources` directory and add the following content:
+
+   ```properties
+   spring.application.name=
+   spring.datasource.url=
+   spring.datasource.driver-class-name=
+   spring.datasource.username=
+   spring.datasource.password=
+   spring.jpa.hibernate.ddl-auto=
+   ```
+
+5. **Access the Application:**
+   Access the API throw `http://localhost:8080/{END_POINT}`
 
 ## How to Run the Test Suite
 
