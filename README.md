@@ -36,13 +36,7 @@ The Job Management System is designed to handle the execution of various types o
     mvn clean install
    ```
 
-3. **Run the Application:**
-
-   ```bash
-   mvn spring-boot:run
-   ```
-
-4. **Create configuration file:**
+3. **Create configuration file:**
 
    Create a file named `application.properties` in the `src/main/resources` directory and add the following content:
 
@@ -53,6 +47,12 @@ The Job Management System is designed to handle the execution of various types o
    spring.datasource.username=
    spring.datasource.password=
    spring.jpa.hibernate.ddl-auto=
+   ```
+
+4. **Run the Application:**
+
+   ```bash
+   mvn spring-boot:run
    ```
 
 5. **Access the Application:**
