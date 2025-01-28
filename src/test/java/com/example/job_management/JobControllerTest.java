@@ -248,7 +248,6 @@ class JobControllerTest {
         Job job = new Job();
         job.setState(JobState.FAILED);
 
-        // Mock the behavior of jobService
         when(jobService.getJobById(jobId)).thenReturn(job);
 
         ResponseEntity<?> response = jobController.retryJob(jobId);
@@ -256,6 +255,6 @@ class JobControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody() instanceof ResponseDto);
         verify(jobService, times(1)).getJobById(jobId);
-        verify(jobService, times(1)).createJob(new JobDto(job));
+        verify(jobService, times(1)).retryJob(jobId);
     }
 }

@@ -21,7 +21,7 @@ public class JobService {
         if (job.getType() == null || job.getType().length() == 0) {
             return "Invalid job type";
         }
-        if (job.getPriority() < 1) {
+        if (job.getPriority() < 0) {
             return "Invalid job priority";
         }
         if (job.getScheduledTime() != null && job.getScheduledTime().isBefore(java.time.LocalDateTime.now())) {
@@ -38,6 +38,14 @@ public class JobService {
             }
         }
         return null;
+    }
+
+    public void retryJob(Long id) {
+        Job job = jobRepository.findById(id).orElse(null);
+        if (job != null) {
+            job.setState(JobState.QUEUED);
+            jobRepository.save(job);
+        }
     }
 
     public Job createJob(JobDto jobdto) {

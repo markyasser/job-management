@@ -141,8 +141,8 @@ public class JobController {
                     .body(new ResponseDto("Job is not in failed state", HttpStatus.CONFLICT.value()));
         }
 
-        job.setState(JobState.QUEUED);
-        jobService.createJob(new JobDto(job));
+        // job = jobService.createJob(new JobDto(job));
+        jobService.retryJob(id);
 
         return ResponseEntity
                 .ok(new ResponseDto("Job retried successfully with new state : " + job.getState(),

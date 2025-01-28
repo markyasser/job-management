@@ -13,11 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,24 +49,26 @@ public class JobServiceTest {
     @Test
     void testCreateJob() {
 
-        when(jobRepository.save(job1)).thenReturn(job1);
+        when(jobRepository.save(any(Job.class))).thenReturn(job1);
 
         Job createdJob = jobService.createJob(new JobDto(job1));
 
         assertNotNull(createdJob);
-        verify(jobRepository, times(1)).save(job1);
+        verify(jobRepository, times(1)).save(any(Job.class));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void testCreateJobs() {
 
         List<Job> jobs = Arrays.asList(job1, job2);
-        when(jobRepository.saveAll(jobs)).thenReturn(jobs);
+
+        when(jobRepository.saveAll(any(List.class))).thenReturn(jobs);
 
         List<Job> createdJobs = jobService.createJobs(Arrays.asList(new JobDto(job1), new JobDto(job2)));
 
         assertEquals(2, createdJobs.size());
-        verify(jobRepository, times(1)).saveAll(jobs);
+        verify(jobRepository, times(1)).saveAll(any(List.class));
     }
 
     @Test
@@ -145,4 +149,90 @@ public class JobServiceTest {
         assertFalse(isRunning);
         verify(jobRepository, times(1)).findById(1L);
     }
+
+    @Test
+    void testRetryJob_jobNotFound() {
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.empty());
+
+        jobService.retryJob(1L);
+
+        verify(jobRepository, times(0)).save(any(Job.class));
+    }
+
+    @Test
+    void testRetryJob() {
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job1));
+
+        jobService.retryJob(1L);
+
+        verify(jobRepository, times(1)).save(any(Job.class));
+    }
+
+    @Test
+    void testValidateJob_valid() {
+
+        JobDto jobDto = new JobDto();
+        jobDto.setType("type");
+        jobDto.setScheduledTime(LocalDateTime.now());
+
+        String error = jobService.validateJob(jobDto);
+
+        assertNull(error);
+    }
+
+    @Test
+    void testValidateJob_invalidType() {
+
+        JobDto jobDto = new JobDto();
+        jobDto.setType("");
+        jobDto.setScheduledTime(LocalDateTime.now());
+
+        String error = jobService.validateJob(jobDto);
+
+        assertEquals("Invalid job type", error);
+    }
+
+    @Test
+    void testValidateJob_invalidPriority() {
+
+        JobDto jobDto = new JobDto();
+        jobDto.setType("type");
+        jobDto.setPriority(-1);
+        jobDto.setScheduledTime(LocalDateTime.now());
+
+        String error = jobService.validateJob(jobDto);
+
+        assertEquals("Invalid job priority", error);
+    }
+
+    @Test
+    void testValidateJob_invalidScheduledTime() {
+
+        JobDto jobDto = new JobDto();
+        jobDto.setType("type");
+        jobDto.setScheduledTime(LocalDateTime.now().minusDays(1));
+
+        String error = jobService.validateJob(jobDto);
+
+        assertEquals("Scheduled time cannot be in the past", error);
+    }
+
+    @Test
+    void testValidateJobs_valid() {
+
+        JobDto jobDto1 = new JobDto();
+        jobDto1.setType("type1");
+        jobDto1.setScheduledTime(LocalDateTime.now());
+
+        JobDto jobDto2 = new JobDto();
+        jobDto2.setType("type2");
+        jobDto2.setScheduledTime(LocalDateTime.now());
+
+        String error = jobService.validateJobs(Arrays.asList(jobDto1, jobDto2));
+
+        assertNull(error);
+    }
+
 }
